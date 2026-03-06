@@ -393,7 +393,7 @@ export default function App() {
 
   const userId = session?.user?.id;
 
-  const [habitLog, toggleHabit, habitLoading] = useHabitLog(userId);
+const [habitLog, toggleHabit] = useHabitLog(userId);
   const [weekChecks, toggleWeekCheck] = useWeekChecks(userId);
   const [schedule, todayOverride, saveScheduleDay, saveTodayOverride, clearTodayOverride] = useSchedule(userId);
 
