@@ -103,7 +103,7 @@ const todayDayName = () => {
   return names[new Date().getDay()];
 };
 
-const monthKey = (year, month) => `${year}-${String(month+1).padStart(2,"0")}`;
+
 
 const daysInMonth = (year, month) => new Date(year, month+1, 0).getDate();
 const firstDayOfMonth = (year, month) => {
@@ -163,11 +163,9 @@ function Pill({ habitId, small }) {
 export default function App() {
   const [view, setView] = useState("today");
   // today's habit log: { "2026-03-05": { music: true, workout: false, ... } }
-  const [habitLog, setHabitLog, logLoaded] = useStorage("habitlog-v1", {});
-  // weekly non-neg checks: { "2026-W10": { music3: true, ... } }
-  const [weekChecks, setWeekChecks, weekLoaded] = useStorage("weekcheck-v1", {});
-  // custom schedule edits
-  const [schedule, setSchedule, schedLoaded] = useStorage("schedule-v1", DEFAULT_SCHEDULE);
+  const [habitLog, setHabitLog] = useStorage("habitlog-v1", {});
+const [weekChecks, setWeekChecks] = useStorage("weekcheck-v1", {});
+const [schedule, setSchedule] = useStorage("schedule-v1", DEFAULT_SCHEDULE);
 
   const [editingBlock, setEditingBlock] = useState(null);
   const [editText, setEditText] = useState("");
