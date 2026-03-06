@@ -7,14 +7,18 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ── Theme ─────────────────────────────────────────────────────────────────────
 function useColorScheme() {
-  const [dark, setDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const h = e => setDark(e.matches);
-    mq.addEventListener("change", h);
-    return () => mq.removeEventListener("change", h);
-  }, []);
-  return dark;
+  const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const [dark, setDark] = useState(() => {
+    const stored = localStorage.getItem("theme");
+    if (stored) return stored === "dark";
+    return systemDark;
+  });
+  const toggle = () => {
+    const next = !dark;
+    setDark(next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+  };
+  return [dark, toggle];
 }
 
 const DARK = {
@@ -376,7 +380,7 @@ function AuthScreen({ t }) {
 
 // ── Main App ──────────────────────────────────────────────────────────────────
 export default function App() {
-  const isDark = useColorScheme();
+  const [isDark, toggleTheme] = useColorScheme();
   const t = isDark ? DARK : LIGHT;
   const habits = isDark ? HABITS_DARK : HABITS_LIGHT;
 
@@ -447,7 +451,11 @@ const [habitLog, toggleHabit] = useHabitLog(userId);
               <button key={v} onClick={()=>setView(v)} style={navBtn(view===v)}>{v.toUpperCase()}</button>
             ))}
           </div>
-          <button onClick={()=>supabase.auth.signOut()} style={{fontSize:9,color:t.textDim,background:"transparent",border:`1px solid ${t.borderCard}`,borderRadius:4,padding:"6px 10px",cursor:"pointer",fontFamily:"'Courier New',monospace",letterSpacing:"0.05em"}}>OUT</button>
+          <button onClick={toggleTheme} style={{width:32,height:32,borderRadius:"50%",background:t.navBg,border:`1px solid ${t.borderCard}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0}} title={isDark?"Switch to light mode":"Switch to dark mode"}>
+  {isDark ? "☀️" : "🌙"}
+</button>
+<button onClick={()=>supabase.auth.signOut()} style={{fontSize:9,color:t.textDim,background:"transparent",border:`1px solid ${t.borderCard}`,borderRadius:4,padding:"6px 10px",cursor:"pointer",fontFamily:"'Courier New',monospace",letterSpacing:"0.05em"}}>OUT</button>
+
         </div>
       </div>
 
